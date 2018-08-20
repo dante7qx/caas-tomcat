@@ -12,6 +12,6 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>HelloServlet</servlet-name>
-  	<url-pattern>/HelloServlet</url-pattern>
+  	<url-pattern>/caas</url-pattern>
   </servlet-mapping>
 </web-app>
