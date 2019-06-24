@@ -1,0 +1,7 @@
+## docker commit -a "dante" -m "test docker commit" a6d8b2d5cbfe xox:v2
+
+FROM xox:v2
+
+RUN rm -rf webapps/s2i-tomcat/WEB-INF/lib/fastjson-1.2.46.jar 
+
+ADD fastjson-1.2.58.jar webapps/s2i-tomcat/WEB-INF/lib/
