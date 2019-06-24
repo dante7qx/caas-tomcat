@@ -10,8 +10,18 @@
   	<description></description>
   	<servlet-class>org.dante.springboot.HelloServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>FastjsonServlet</servlet-name>
+  	<display-name>FastjsonServlet</display-name>
+  	<description></description>
+  	<servlet-class>org.dante.springboot.FastjsonServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>HelloServlet</servlet-name>
   	<url-pattern>/caas</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>FastjsonServlet</servlet-name>
+  	<url-pattern>/json</url-pattern>
   </servlet-mapping>
 </web-app>
