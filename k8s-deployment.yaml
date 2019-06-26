@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dante-docker-commit-tomcat
+  namespace: dante
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dante-docker-commit-tomcat
+  template:
+    metadata:
+      labels:
+        app: dante-docker-commit-tomcat
+    spec:
+      containers:
+      - name: dante-docker-commit-tomcat
+        image: xox:v2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dante-docker-commit-tomcat-service
+  namespace: dante
+spec:
+  type: NodePort
+  selector:
+    app: dante-docker-commit-tomcat
+  ports:
+  - port: 8080
+    nodePort: 30001 
+
+ 
+ 
