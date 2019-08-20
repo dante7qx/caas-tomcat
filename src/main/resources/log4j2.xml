@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- 控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        
+        <RollingFile name="DailyFileLog" fileName="/Users/dante/Documents/Project/spring/hna/caas/caas-tomcat/logs/${env:MY_POD_NAME}.log"
+            filePattern="/Users/dante/Documents/Project/spring/hna/caas/caas-tomcat/logs/$${date:yyyy-MM}/s2i-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+    	<logger name="org.apache" level="INFO" />
+        <logger name="org.dante.springboot" level="INFO" />
+        
+        <Root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="DailyFileLog"/>
+        </Root>
+    </Loggers>
+</Configuration>
