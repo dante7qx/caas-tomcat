@@ -15,10 +15,18 @@ spec:
     spec: 
       containers:
       - name: s2i-tomcat
-        image: xx:v1
+        image: s2i-tomcat:v1
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8080
+        - name: web
+          containerPort: 8080
+        volumeMounts:
+        - name: logs
+          mountPath: /usr/local/tomcat/logs 
+      volumes:
+      - name: logs
+        hostPath:
+          path: /Users/dante/Documents/Project/spring/hna/caas/caas-tomcat/logs/k8s-data
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -59,7 +67,7 @@ spec:
   - host: localhost
     http:
       paths:
-      - path: /tom
+      - path: /
         backend:
           serviceName: s2i-tomcat
           servicePort: 8080
