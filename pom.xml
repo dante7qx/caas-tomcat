@@ -74,7 +74,7 @@
 			</resource>
 			<!--扫描配置文件所在的目录 -->
 			<resource>
-				<directory>src/resources</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>

@@ -1,10 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configs
+  namespace: dante
+data:
+  application.properties: |
+    app.title=KY Container From Configmap 
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: s2i-tomcat
   namespace: dante
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: s2i-tomcat
@@ -15,7 +26,7 @@ spec:
     spec: 
       containers:
       - name: s2i-tomcat
-        image: s2i-tomcat:v1
+        image: dante2012/s2i-tomcat:v1
         imagePullPolicy: IfNotPresent
         ports:
         - name: web
@@ -23,10 +34,19 @@ spec:
         volumeMounts:
         - name: logs
           mountPath: /usr/local/tomcat/logs 
+        - name: configs
+          mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/application.properties
+          subPath: application.properties 
       volumes:
       - name: logs
         hostPath:
-          path: /Users/dante/Documents/Project/spring/hna/caas/caas-tomcat/logs/k8s-data
+          path: /Users/dante/Documents/Project/java-world/hna/caas/caas-tomcat/logs/k8s-data
+      - name: configs
+        configMap:
+          name: app-configs
+          items:
+          - key: application.properties
+            path: application.properties
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -39,7 +59,7 @@ spec:
                   values:
                   - s2i-tomcat
               topologyKey: kubernetes.io/hostname
-
+      
 ---
 apiVersion: v1
 kind: Service

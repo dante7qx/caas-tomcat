@@ -11,6 +11,7 @@ public class MsgVO implements Serializable {
 
 	private String msgId;
 	private String info;
+	private String title;
 
 	public String getMsgId() {
 		return msgId;
@@ -26,6 +27,14 @@ public class MsgVO implements Serializable {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 

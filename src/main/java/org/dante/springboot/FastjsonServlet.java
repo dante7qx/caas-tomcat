@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dante.springboot.util.ConfigManager;
 import org.dante.springboot.vo.MsgVO;
 
 import com.alibaba.fastjson.JSON;
@@ -16,7 +17,8 @@ import com.alibaba.fastjson.JSON;
  */
 public class FastjsonServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	private static final ConfigManager cm = ConfigManager.getInstance("application");
+    
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -29,6 +31,7 @@ public class FastjsonServlet extends HttpServlet {
 		MsgVO msg = new MsgVO();
 		msg.setMsgId("1000001");
 		msg.setInfo("com.alibaba.fastjson");
+		msg.setTitle(cm.getPropertiesConfig("app.title"));
 		response.getWriter().println(JSON.toJSONString(msg));
 	}
 
