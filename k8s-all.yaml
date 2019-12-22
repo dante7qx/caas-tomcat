@@ -31,12 +31,19 @@ spec:
         ports:
         - name: web
           containerPort: 8080
+        env:
+        - name: LOG_HOME
+          value: /usr/local/tomcat/logs/s2i
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: logs
           mountPath: /usr/local/tomcat/logs 
         - name: configs
           mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/application.properties
-          subPath: application.properties 
+          subPath: application.properties
       volumes:
       - name: logs
         hostPath:
@@ -59,6 +66,9 @@ spec:
                   values:
                   - s2i-tomcat
               topologyKey: kubernetes.io/hostname
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
       
 ---
 apiVersion: v1
