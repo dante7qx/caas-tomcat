@@ -32,7 +32,8 @@ public class HelloServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		response.getWriter()
 			.append("<h1 align='center'>欢迎使用 CaaS 容器云！</h1>")
-			.append("<h3 align='center'>".concat(cm.getPropertiesConfig("app.title")).concat("</h3>"));
+			.append("<h3 align='center'>".concat(cm.getPropertiesConfig("app.title")).concat("</h3>"))
+			.append("<h3 align='center'>系统可用的CPU核信息: ".concat(Runtime.getRuntime().availableProcessors() + "").concat("</h3>"));
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

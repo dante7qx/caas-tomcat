@@ -13,6 +13,10 @@
 		<servlet-name>FastjsonServlet</servlet-name>
 		<servlet-class>org.dante.springboot.FastjsonServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>MemServlet</servlet-name>
+		<servlet-class>org.dante.springboot.MemServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>HelloServlet</servlet-name>
 		<url-pattern>/caas</url-pattern>
@@ -20,5 +24,9 @@
 	<servlet-mapping>
 		<servlet-name>FastjsonServlet</servlet-name>
 		<url-pattern>/json</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MemServlet</servlet-name>
+		<url-pattern>/mem</url-pattern>
 	</servlet-mapping>
 </web-app>

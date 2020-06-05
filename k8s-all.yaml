@@ -9,7 +9,8 @@ data:
     app.title=KY Container From Configmap 
 
 ---
-apiVersion: extensions/v1beta1
+#apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: s2i-tomcat
@@ -38,9 +39,18 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: JAVA_OPTS
+          value: "-Xms2048m -Xmx2048m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m"
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "1024Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2048Mi"
         volumeMounts:
         - name: logs
-          mountPath: /usr/local/tomcat/logs 
+          mountPath: /home/ap/logs 
         - name: configs
           mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/application.properties
           subPath: application.properties
@@ -57,7 +67,7 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
+          - weight: 80
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
