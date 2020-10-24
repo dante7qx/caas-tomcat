@@ -6,6 +6,7 @@ LABEL MAINTAINER="dante <dantefreedom@gmail.com>"
 ENV CATALINA_OPTS="-XX:MinRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0 -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
 
 COPY target/s2i-tomcat.war webapps/ROOT.war
+COPY docker-entrypoint.sh /
 
 RUN set -eux; \
     groupadd -r spirit --gid=1000; \
@@ -15,6 +16,7 @@ RUN set -eux; \
 	chown -R spirit:spirit /home/ap/logs; \
     chown -R spirit:spirit .; \
     chmod 777 logs temp work; \
+    chmod 755 /docker-entrypoint.sh; \
 	unzip -oq webapps/ROOT.war -d webapps/ROOT; \
 	rm -rf webapps/ROOT.war
 
@@ -23,8 +25,6 @@ USER spirit
 EXPOSE 8080
 
 VOLUME ["/home/ap/logs"]
-
-COPY docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
