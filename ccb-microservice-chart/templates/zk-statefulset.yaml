@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: 
+  name: {{ .Values.label.zk }}
+spec: 
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector: 
+    matchLabels: 
+      statefulSet: {{ .Values.label.zk }}
+  serviceName: {{ .Values.label.zk }}-headless
+  template: 
+    metadata: 
+      annotations: 
+        {{ .Values.annotations.vpc }}
+      labels: 
+        statefulSet: {{ .Values.label.zk }}
+    spec: 
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers: 
+      - name: {{ .Values.label.zk }}
+        image: {{ .Values.image.harbor }}/{{ .Values.image.public }}/{{ .Values.image.zk }}
+        imagePullPolicy: IfNotPresent
+        ports: 
+        - name: client
+          containerPort: 2181
+        - name: listen
+          containerPort: 2888
+        - name: election
+          containerPort: 3888
+        env: 
+        {{- toYaml .Values.env | nindent 10 }}
+        envFrom: 
+        - configMapRef: 
+            name: {{ .Values.config.zkEnv }}
+        resources:
+          requests:
+            cpu: {{ .Values.resource.zk.requestCpu}}
+            memory: {{ .Values.resource.zk.requestMem}}
+          limits:
+            cpu: {{ .Values.resource.zk.limitCpu}}
+            memory: {{ .Values.resource.zk.limitMem}}
+        volumeMounts:
+        - name: {{ .Values.config.zkFile }}
+          mountPath: /zookeeper-3.4.1/jaas.conf
+          subPath: jaas.conf
+        - name: local-0
+          mountPath: /data
+        - name: local-1
+          mountPath: /datalog
+      volumes:
+      - name: {{ .Values.config.zkFile }}
+        configMap: 
+          name: {{ .Values.config.zkFile }}
+          items: 
+          - key: jaas.conf
+            path: jaas.conf
+  volumeClaimTemplates: 
+  - metadata: 
+      annotations: 
+        type: local
+      labels: 
+        statefulSet: {{ .Values.label.zk }}
+        type: local
+      name: local-0
+    spec: 
+      accessModes: 
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.volume.local.zk.local0 }}
+      storageClassName: {{ .Values.volume.local.storageClassName }}
+      volumeMode: Filesystem
+  - metadata: 
+      annotations: 
+        type: local
+      labels: 
+        statefulSet: {{ .Values.label.zk }}
+        type: local
+      name: local-1
+    spec: 
+      accessModes: 
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.volume.local.zk.local1 }}
+      storageClassName: {{ .Values.volume.local.storageClassName }}
+      volumeMode: Filesystem
+         
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.label.zk }}-headless
+spec: 
+  clusterIP: None
+  ports: 
+  - name: client
+    port: 2181
+    targetPort: 2181
+  - name: listen
+    port: 2888
+    targetPort: 2888
+  - name: election
+    port: 3888
+    targetPort: 3888
+  selector: 
+    statefulSet: {{ .Values.label.zk }}
+        

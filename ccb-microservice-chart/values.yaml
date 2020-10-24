@@ -1,0 +1,70 @@
+annotations:
+  vpc: 'alcor.io/vpc-cni.ipam: "true"'
+
+imagePullSecrets: 
+- name: core-dev-az1-dante-pullsecret-docker-caas-dev-jh
+
+replicaCount: 
+  s2i: 1
+
+label:
+  s2i: s2i-tomcat
+  zk: s2i-zk
+  
+image: 
+  harbor: docker.caas.dev.jh
+  public: basic
+  project: core-dev-az1
+  s2i: x-ap:v1
+  zk: zookeeper:3.4.14
+
+env:
+- name: MY_POD_NAME
+  valueFrom:
+    fieldRef: 
+      fieldPath: metadata.name
+- name: MY_POD_IP
+  valueFrom:
+    fieldRef: 
+      fieldPath: status.podIP
+- name: MY_NODE_IP
+  valueFrom:
+    fieldRef: 
+      fieldPath: status.hostIP  
+
+config:
+  s2iFile: s2i-ap-cm-file
+  s2iEnv: s2i-ap-cm-env
+  zkFile: s2i-zk-cm-file
+  zkEnv: s2i-zk-cm-env
+  s2iProps: 
+    CATALINA_OPTS: "-XX:MinRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0 -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
+  zkProps: 
+    JVMFLAGS: "-Xms768m -Xmx768m -Djava.security.auth.login.config=/zookeeper-3.4.1/jaas.conf"
+    
+  
+resource: 
+  s2i:
+    requestCpu: 500m
+    requestMem: 512Mi
+    limitCpu: 1000m
+    limitMem: 1Gi
+  zk:
+    requestCpu: 500m
+    requestMem: 1Gi
+    limitCpu: 1000m
+    limitMem: 1Gi
+
+nodePort: 
+  s2i: 30014
+  zk: 30015
+  
+volume: 
+  share: 
+    s2i: x
+  local:
+    storageClassName: fast-disks
+    zk:
+      local0: 10Gi
+      local1: 10Gi
+

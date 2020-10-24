@@ -1,0 +1,32 @@
+annotations:
+  vpc: alcor.io/vpc-cni.ipam: "true"
+
+imagePullSecrets: 
+- name: core-dev-az1-dante-pullsecret-docker-caas-dev-jh
+
+replicaCount: 
+  s2i: 1
+
+label:
+  s2i: s2i-tomcat
+  
+image: 
+  harbor: docker.caas.dev.jh
+  project: core-dev-az1
+  s2i: s2i:v1
+  
+config:
+  s2i: s2i-cm
+
+prop: 
+  s2is: 
+    db.name: insert
+    db.url: 128.221.223.22
+  
+resource: 
+  s2i:
+    requestCpu: 500m
+    requestMem: 512Mi
+    limitCpu: 1000m
+    limitMem: 1Gi
+    

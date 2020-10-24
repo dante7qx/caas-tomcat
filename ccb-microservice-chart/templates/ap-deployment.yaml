@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.label.s2i }}
+spec:
+  replicas: {{ .Values.replicaCount.s2i }}
+  selector:
+    matchLabels:
+      deployment: {{ .Values.label.s2i }}
+  template:
+    metadata:
+      annotations: 
+        {{ .Values.annotations.vpc }}
+      labels:
+        deployment: {{ .Values.label.s2i }}
+    spec: 
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+      - name: {{ .Values.label.s2i }}
+        image: {{ .Values.image.harbor }}/{{ .Values.image.project }}/{{ .Values.image.s2i }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+        env: 
+        {{- toYaml .Values.env | nindent 10 }}
+        envFrom: 
+        - configMapRef: 
+            name: {{ .Values.config.s2iEnv }}
+        livenessProbe:
+          httpGet:
+            path: /json
+            port: 8080
+          initialDelaySeconds: 20
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /json
+            port: 8080
+          initialDelaySeconds: 20
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: {{ .Values.config.s2iFile }}
+          mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/application.properties
+          subPath: application.properties
+        - name: {{ .Values.volume.share.s2i }}
+          mountPath: /home/ap/logs
+        resources:
+          requests:
+            cpu: {{ .Values.resource.s2i.requestCpu}}
+            memory: {{ .Values.resource.s2i.requestMem}}
+          limits:
+            cpu: {{ .Values.resource.s2i.limitCpu}}
+            memory: {{ .Values.resource.s2i.limitMem}}
+      volumes:
+      - name: {{ .Values.config.s2iFile }}
+        configMap: 
+          name: {{ .Values.config.s2iFile }}
+          items: 
+          - key: application.properties
+            path: application.properties
+      - name: {{ .Values.volume.share.s2i }}
+        persistentVolumeClaim: 
+          claimName: {{ .Values.volume.share.s2i }} 
+          
