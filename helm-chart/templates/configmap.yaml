@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: s2i-cm
+data: 
+  {{- toYaml .Values.prop.s2is | nindent 2 }}
+  {{- (.Files.Glob "config/s2i/*").AsConfig | nindent 2 }}
